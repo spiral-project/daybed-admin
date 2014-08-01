@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="css/style.css"/>
+  <script src="js/ext/hawk.js"></script>
+  <script src="js/ext/daybed.js"></script>
+  <script src="js/ext/jquery.min.js"></script>
+  <script src="js/app.js"></script>
+  <title>Daybed Admin</title>
+</head>
+<body role="application">
+  <h1>Daybed Admin</h1>
+
+  <div class="main-form">
+
+    <!-- Record -->
+    <section id="login-info" class="hidden">
+      <h3>Enter your Daybed credentials</h3>
+
+      <form id="login-form">
+          <label>Id <input type="text" name="id" /></label>
+          <label>Key <input type="text" name="key" /></label>
+      </form>
+
+      <div>
+        <button id="login-button">Login</button>
+      </div>
+    </section>
+
+    <!-- Models -->
+    <section id="models-info" class="hidden">
+      <h3>Models</h3>
+      <ul id="models-list">
+          <li>Modelname</li>
+      </ul>
+    </section>
+
+    <section id="model-info" class="hidden">
+      <h3>Modelname</h3>
+      <ul id="records-list">
+          <li>record</li>
+      </ul>
+
+      <div>
+        <button id="add-record-button">Add a record</button>
+      </div>
+    </section>
+
+    <!-- Record -->
+    <section id="put-record-info" class="hidden">
+      <h3>Add / change a record</h3>
+
+      <form id="put-record-form">
+          <label>Title <input type="text" name="title" /></label>
+          <label>Description <input type="text" name="description" /></label>
+      </form>
+      <div>
+        <button id="put-record-button">Submit</button>
+      </div>
+    </section>
+
+    <button id="reset-button">Main menu</button>
+  </div>
+
+</body>
+</html>
