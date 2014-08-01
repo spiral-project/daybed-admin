@@ -16,16 +16,18 @@
   <div class="main-form">
 
     <!-- Record -->
-    <section id="login-info" class="hidden">
+    <section id="login-info">
       <h3>Enter your Daybed credentials</h3>
 
       <form id="login-form">
-          <label>Id <input type="text" name="id" /></label>
-          <label>Key <input type="text" name="key" /></label>
+          <label>Id <input id="tokenId" type="text" name="id" /></label>
+          <label>Key <input id="tokenKey" type="text" name="key" /></label>
+          <label>Host <input id="tokenHost" type="text" name="host" /></label>
       </form>
 
       <div>
         <button id="login-button">Login</button>
+        <button id="signup-button">Get a new token</button>
       </div>
     </section>
 

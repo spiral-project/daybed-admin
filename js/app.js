@@ -8,8 +8,13 @@ var App = {
     // Login form
     this.loginInfo = document.getElementById('login-info');
     this.loginForm = document.getElementById('login-form');
+    this.tokenId = document.getElementById('tokenId');
+    this.tokenKey = document.getElementById('tokenKey');
+    this.tokenHost = document.getElementById('tokenHost');
     this.loginButton = document.getElementById('login-button');
     this.loginButton.addEventListener('click', this.logIn.bind(this));
+    this.signUpButton = document.getElementById('signup-button');
+    this.signUpButton.addEventListener('click', this.signUp.bind(this));
 
     // Models form
     this.modelsInfo = document.getElementById('models-info');
@@ -29,6 +34,11 @@ var App = {
     // Reset
     this.resetButton = document.getElementById('reset-button');
     this.resetButton.addEventListener('click', this.reset.bind(this));
+
+    // Setup
+    this.tokenId.value = sessionStorage.tokenId || '';
+    this.tokenKey.value = sessionStorage.tokenKey || '';
+    this.tokenHost.value = sessionStorage.host || 'http://localhost:8000';
   },
 
   hideAllForms: function hideAllForm() {
@@ -40,7 +50,7 @@ var App = {
 
   showLoginInfo: function showModelsInfo() {
     this.hideAllForms();
-    this.modelsInfo.classList.remove('hidden');
+    this.loginInfo.classList.remove('hidden');
   },
 
   showModelsInfo: function showModelsInfo() {
@@ -60,7 +70,40 @@ var App = {
 
   reset: function reset() {
     this.showLoginForm();
-  }
+  },
+
+  logIn: function logIn() {
+    sessionStorage.tokenId = this.tokenId.value;
+    sessionStorage.tokenKey = this.tokenKey.value;
+    sessionStorage.host = this.tokenHost.value;
+
+    this.session = new Daybed.Session(sessionStorage.host, {
+      id: sessionStorage.tokenId,
+      key: sessionStorage.tokenKey
+    });
+
+    this.session.getModels().then(function(models) {
+      var modelList = $("#models-list");
+      if (models.length === 0) {
+        modelList.html("<li>No models yet.</li>");
+      } else {
+        for (var i = 0; i < models.length; i++) {
+          modelList.append("<li>" + models[i] + "</li>");
+        }
+      }
+      this.showModelsInfo();
+    }.bind(this));
+  },
+
+  signUp: function signUp() {
+    Daybed.getToken(this.tokenHost.value).then(function(resp) {
+      this.tokenId.value = resp.credentials.id;
+      this.tokenKey.value = resp.credentials.key;
+      this.showLoginInfo();
+    }.bind(this));
+  },
+
+  putRecord: function putRecord() {}
 };
 
 window.addEventListener('DOMContentLoaded', function onload() {
