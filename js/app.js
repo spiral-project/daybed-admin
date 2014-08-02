@@ -69,7 +69,7 @@ var App = {
   },
 
   reset: function reset() {
-    this.showLoginForm();
+    this.showLoginInfo();
   },
 
   logIn: function logIn() {

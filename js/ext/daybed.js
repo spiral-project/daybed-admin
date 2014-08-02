@@ -84,6 +84,7 @@
 
     this.host = host;
     this.credentials = credentials;
+    this.credentials.algorithm = "sha256";
     this.options = options;
   }
 
