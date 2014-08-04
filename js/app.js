@@ -212,7 +212,8 @@ var App = {
     this.deleteRecordButton.classList.remove('hidden');
   },
 
-  putRecord: function putRecord() {
+  putRecord: function putRecord(event) {
+    event.preventDefault();  // Prevent default submit handle
     var record = {};
     $("#put-record-form input").each(function(index, input) {
       record[$(input).attr("name")] = $(input).val();
