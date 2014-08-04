@@ -31,6 +31,7 @@ var App = {
     // Put Record
     this.putRecordInfo = document.getElementById('put-record-info');
     this.putRecordForm = document.getElementById('put-record-form');
+    this.putRecordForm.addEventListener('submit', this.putRecord.bind(this));
     this.putRecordButton = document.getElementById('put-record-button');
     this.putRecordButton.addEventListener('click', this.putRecord.bind(this));
     this.deleteRecordButton = document.getElementById('delete-record-button');
@@ -112,11 +113,12 @@ var App = {
         for (var i = 0; i < models.length; i++) {
           var item = models[i];
           var li = $(
-            '<li><a href="#" title="' + item.description + '">' +
+            '<li data-id="' + item.id + '"><a href="#" title="' + item.description + '">' +
               item.title + '</a></li>');
+          var self = this;
           li.click(function() {
-            this.getRecords(item.id);
-          }.bind(this));
+            self.getRecords($(this).data('id'));
+          });
           modelList.append(li);
         }
       }
@@ -150,11 +152,13 @@ var App = {
         for (var i = 0; i < records.length; i++) {
           var record = records[i];
           var li = $(
-            '<li><a href="#">' + record[mainfield] + "</a></li>"
+            '<li data-index="' + i  +
+              '"><a href="#">' + record[mainfield] + "</a></li>"
           );
+          var self = this;
           li.click(function() {
-            this.getRecord(record);
-          }.bind(this));
+            self.getRecord(self.currentModel.records[$(this).data('index')]);
+          });
           recordsList.append(li);
         }
       }
