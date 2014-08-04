@@ -233,6 +233,9 @@ var App = {
         }
         input = $("<label>" + field.label +' </label>');
         input.append(select);
+      } else if (field.type === "text") {
+        input = $("<label>" + field.label +'<br/><textarea name="' + field.name +
+                  '"></textarea></label>');
       } else {
         input = $(
           "<label>" + field.label +
@@ -252,6 +255,7 @@ var App = {
     $("#put-record-info h3").text("Change record (" + record.id + ")");
     for(var key in record) {
       $("#put-record-form select[name='" + key + "']").val(record[key]);
+      $("#put-record-form textarea[name='" + key + "']").text(record[key]);
       $("#put-record-form input[name='" + key + "']").val(record[key]);
     }
     this.deleteRecordButton.classList.remove('hidden');
@@ -265,6 +269,9 @@ var App = {
     });
     $("#put-record-form select").each(function(index, input) {
       record[$(input).attr("name")] = $(input).val();
+    });
+    $("#put-record-form textarea").each(function(index, input) {
+      record[$(input).attr("name")] = $(input).text();
     });
     this.session.addRecord(this.currentModel.id, record)
     .then(function() {

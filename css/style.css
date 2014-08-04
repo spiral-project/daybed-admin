@@ -17,7 +17,7 @@ span {
   font-weight: bold;
 }
 
-input[type="text"] {
+input[type="text"], textarea {
   background: #EAE6E1;
   border: 0;
   font-weight: bold;
@@ -27,6 +27,10 @@ input[type="text"] {
   margin: 5px 0;
   outline: medium none;
   color: #838383;
+}
+
+textarea {
+  height: 100px;
 }
 
 button, .button {
