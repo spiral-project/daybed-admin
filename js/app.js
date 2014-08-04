@@ -25,6 +25,8 @@ var App = {
     this.recordsList = document.getElementById('recordsList');
     this.addRecordButton = document.getElementById('add-record-button');
     this.addRecordButton.addEventListener('click', this.addRecord.bind(this));
+    this.exportAsJsonLink = document.getElementById('export-model');
+    this.exportAsJsonLink.addEventListener('click', this.exportModel.bind(this));
 
     // Put Record
     this.putRecordInfo = document.getElementById('put-record-info');
@@ -158,6 +160,15 @@ var App = {
       }
       this.showModelInfo(modelname);
     }.bind(this));
+  },
+
+  exportModel: function exportModel() {
+    var exportModelLink = $("#export-model");
+    var model = JSON.parse(JSON.stringify(this.currentModel));
+    delete model.id;
+    exportModelLink.attr('href', 'data:,' + JSON.stringify(model));
+    exportModelLink.attr('download', this.currentModel.id + '.json');
+    return true;
   },
 
   addRecord: function addRecord() {

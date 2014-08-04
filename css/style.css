@@ -29,7 +29,7 @@ input[type="text"] {
   color: #838383;
 }
 
-button {
+button, .button {
   display: block;
   padding: 20px;
   background: #50BFA4;
@@ -40,6 +40,8 @@ button {
   color: #fff;
   margin-top: 10px;
   font-size: 20px;
+  text-align: center;
+  text-decoration: none;
 }
 
 .main-form {
