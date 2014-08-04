@@ -5,12 +5,15 @@
 
 var App = {
   init: function init() {
+    var self = this;
+
     // Login form
     this.loginInfo = document.getElementById('login-info');
-    this.loginForm = document.getElementById('login-form');
     this.tokenId = document.getElementById('tokenId');
     this.tokenKey = document.getElementById('tokenKey');
     this.tokenHost = document.getElementById('tokenHost');
+    this.loginForm = document.getElementById('login-form');
+    this.loginForm.addEventListener('submit', this.logIn.bind(this));
     this.loginButton = document.getElementById('login-button');
     this.loginButton.addEventListener('click', this.logIn.bind(this));
     this.signUpButton = document.getElementById('signup-button');
@@ -18,13 +21,13 @@ var App = {
 
     // Models form
     this.modelsInfo = document.getElementById('models-info');
-    this.modelsList = document.getElementById('modelsList');
 
     // Model form
     this.modelInfo = document.getElementById('model-info');
-    this.recordsList = document.getElementById('recordsList');
     this.addRecordButton = document.getElementById('add-record-button');
     this.addRecordButton.addEventListener('click', this.addRecord.bind(this));
+    this.managePermissionsButton = document.getElementById('permissions-button');
+    this.managePermissionsButton.addEventListener('click', this.getPermissions.bind(this));
     this.exportAsJsonLink = document.getElementById('export-model');
     this.exportAsJsonLink.addEventListener('click', this.exportModel.bind(this));
 
@@ -36,6 +39,23 @@ var App = {
     this.putRecordButton.addEventListener('click', this.putRecord.bind(this));
     this.deleteRecordButton = document.getElementById('delete-record-button');
     this.deleteRecordButton.addEventListener('click', this.deleteRecord.bind(this));
+
+    // Tokens management
+    this.tokensInfo = document.getElementById('tokens-info');
+    this.tokensList = document.getElementById('tokens-list');
+    this.addTokenButton = document.getElementById('add-token-button');
+    this.addTokenButton.addEventListener('click', this.getPermission.bind(this));
+
+    // Token permission form
+    this.tokenInfo = document.getElementById('put-permission-info');
+    this.tokenForm = document.getElementById('put-permission-form');
+    this.tokenForm.addEventListener('submit', this.patchPermissions.bind(this));
+    this.putPermissionsButton = document.getElementById('put-permissions-button');
+    this.putPermissionsButton.addEventListener('click', this.patchPermissions.bind(this));
+    $("#put-permission-form h4").click(function(event) {
+      event.preventDefault();
+      self.togglePermissions($(this).attr('id'));
+    });
 
     // Reset
     this.resetButton = document.getElementById('reset-button');
@@ -52,6 +72,8 @@ var App = {
     this.modelsInfo.classList.add('hidden');
     this.modelInfo.classList.add('hidden');
     this.putRecordInfo.classList.add('hidden');
+    this.tokensInfo.classList.add('hidden');
+    this.tokenInfo.classList.add('hidden');
     this.resetButton.classList.remove('hidden');
   },
 
@@ -77,9 +99,21 @@ var App = {
     this.putRecordInfo.classList.remove('hidden');
   },
 
+  showTokensInfo: function showTokensInfo() {
+    this.hideAllForms();
+    this.tokensInfo.classList.remove('hidden');
+  },
+
+  showTokenInfo: function showTokenInfo() {
+    this.hideAllForms();
+    this.tokenInfo.classList.remove('hidden');
+  },
+
   reset: function reset() {
     if (this.currentModel !== undefined) {
-      if (this.modelInfo.classList.contains("hidden")) {
+      if (!this.tokenInfo.classList.contains("hidden")) {
+        this.getPermissions();
+      } else if (this.modelInfo.classList.contains("hidden")) {
         this.getRecords(this.currentModel.id);
       } else {
         this.currentModel = undefined;
@@ -94,7 +128,8 @@ var App = {
     this.showLoginInfo();
   },
 
-  logIn: function logIn() {
+  logIn: function logIn(event) {
+    if (event) event.preventDefault();
     sessionStorage.tokenId = this.tokenId.value;
     sessionStorage.tokenKey = this.tokenKey.value;
     sessionStorage.host = this.tokenHost.value;
@@ -134,17 +169,25 @@ var App = {
     }.bind(this));
   },
 
+  updateModel: function updateModel(modelname) {
+    return this.session.getModel(modelname)
+      .then(function(model) {
+        this.currentModel = model;
+        this.currentModel.id = modelname;
+        return modelname;
+      }.bind(this));
+
+  },
+
   getRecords: function getRecords(modelname) {
-    this.session.getModel(modelname)
+    this.updateModel(modelname)
     .then(function(model) {
       // 1. Get definition to obtain the main field
-      this.currentModel = model;
-      this.currentModel.id = modelname;
-      var mainfield = model.definition.fields[0].name;
+      var mainfield = this.currentModel.definition.fields[0].name;
 
       // 2. Display a list of records
       var recordsList = $("#records-list");
-      var records = model.records;
+      var records = this.currentModel.records;
       if (records.length === 0) {
         recordsList.html("<li>No records yet.</li>");
       } else {
@@ -237,6 +280,74 @@ var App = {
         this.getRecords(this.currentModel.id);
       }.bind(this));
     }
+  },
+
+  getPermissions: function getPermissions() {
+    var permissions = this.currentModel.acls;
+    var tokensList = $("#tokens-list").html("");
+    Object.keys(permissions).forEach(function(key) {
+      var li = $(
+        '<li data-id="' + key  +
+          '"><a href="#">' + key + "</a></li>"
+      );
+      var self = this;
+      li.click(function() {
+        self.getPermission(null, $(this).data('id'));
+      });
+      tokensList.append(li);
+    }.bind(this));
+    this.showTokensInfo();
+  },
+
+  getPermission: function getPermission(event, token) {
+    if (event) token = "";
+    var permissions = this.currentModel.acls[token];
+    $("#put-permission-info input[type='checkbox']").prop("checked", false);
+    if (permissions) {
+      for(var i = 0; i < permissions.length; i++) {
+        $("#put-permission-info input[name='" + permissions[i] + "']")
+          .prop("checked", true);
+      }
+    }
+    $("#put-permission-info input[name='token']").val(token);
+    this.showTokenInfo();
+  },
+
+  patchPermissions: function patchPermissions(event) {
+    if (event) event.preventDefault();
+    var permissions = [];
+    $("#put-permission-info input[type='checkbox']").each(
+      function(index, input) {
+        var permission = $(input).attr('name');
+        if (!$(input).is(":checked")) {
+          permission = '-' + permission;
+        }
+        permissions.push(permission);
+      }
+    );
+    var acls = {};
+    acls[$("#put-permission-info input[name='token']").val()] = permissions;
+    this.session.patchPermissions(this.currentModel.id, acls)
+      .then(function() {
+        this.updateModel(this.currentModel.id)
+          .then(function(modelname) {
+            this.getPermissions();
+          }.bind(this));
+      }.bind(this)
+    );
+  },
+
+  togglePermissions: function togglePermissions(group) {
+    var off = true;
+    var checkboxes  = $("#" + group + " + div input[type='checkbox']");
+    checkboxes.each(
+      function(index, input) {
+        if ($(input).is(":checked")) {
+          off = false;
+        }
+      }
+    );
+    checkboxes.prop('checked', off);
   }
 };
 

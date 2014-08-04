@@ -20,9 +20,11 @@
       <h3>Enter your Daybed credentials</h3>
 
       <form id="login-form">
-          <label>Id <input id="tokenId" type="text" name="id" /></label>
-          <label>Key <input id="tokenKey" type="text" name="key" /></label>
-          <label>Host <input id="tokenHost" type="text" name="host" /></label>
+          <label>Id <input id="tokenId" type="text" /></label>
+          <label>Key <input id="tokenKey" type="text" /></label>
+          <label>Host <input id="tokenHost" type="text" /></label>
+          <!-- Enable enter to logIn -->
+          <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
       </form>
 
       <div>
@@ -45,6 +47,7 @@
 
       <div>
         <button id="add-record-button">Add a record</button>
+        <button id="permissions-button">Manage permissions</button>
         <a id="export-model" class="button">Export as JSON</a>
       </div>
     </section>
@@ -59,9 +62,64 @@
       </form>
       <div>
         <button id="put-record-button">Submit</button>
-        <button id="delete-record-button" class="hidden">Delete item</button>
+        <button id="delete-record-button" class="hidden">Delete record</button>
       </div>
     </section>
+
+    <!-- Tokens -->
+    <section id="tokens-info" class="hidden">
+      <h3>List tokens</h3>
+      <ul id="tokens-list">
+          <li>tokens</li>
+      </ul>
+      <div>
+        <button id="add-token-button">Add a token access</button>
+      </div>
+    </section>
+
+    <!-- Token -->
+    <section id="put-permission-info" class="hidden">
+      <h3>Change token permissions</h3>
+
+      <form id="put-permission-form">
+          <label>Token <input type="text" name="token" /></label>
+
+          <h4 id="model-permissions">Model permissions</h4>
+          <div>
+              <label>read_definition <input type="checkbox" name="read_definition"/></label>
+              <label>update_definition <input type="checkbox" name="update_definition"/></label>
+              <label>delete_model <input type="checkbox" name="delete_model"/></label>
+          </div>
+
+          <h4 id="all-records-permissions">All records permissions</h4>
+          <div>
+              <label>read_all_records <input type="checkbox" name="read_all_records"/></label>
+              <label>update_all_records <input type="checkbox" name="update_all_records"/></label>
+              <label>delete_all_records <input type="checkbox" name="delete_all_records"/></label>
+          </div>
+
+          <h4 id="own-records-permissions">Own records permissions</h4>
+          <div>
+              <label>create_record <input type="checkbox" name="create_record"/></label>
+              <label>read_own_records <input type="checkbox" name="read_own_records"/></label>
+              <label>update_own_records <input type="checkbox" name="update_own_records"/></label>
+              <label>delete_own_records <input type="checkbox" name="delete_own_records"/></label>
+          </div>
+
+          <h4 id="acls-permissions">ACLs permissions</h4>
+          <div>
+              <label>read_acls <input type="checkbox" name="read_acls"/></label>
+              <label>update_acls <input type="checkbox" name="update_acls"/></label>
+          </div>
+          <!-- Enable enter to logIn -->
+          <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+      </form>
+      <div>
+        <button id="put-permissions-button">Submit</button>
+        <button id="delete-record-button" class="hidden">Delete record</button>
+      </div>
+    </section>
+
 
     <button id="reset-button" class="hidden">Back</button>
   </div>
