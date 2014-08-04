@@ -176,6 +176,7 @@ var App = {
   },
 
   addRecord: function addRecord() {
+    $("#put-record-info h3").text("Add a new record to " + this.currentModel.id);
     // 1. Build the form form the definition
     var putRecordForm = $(this.putRecordForm).html("");
     var fields = this.currentModel.definition.fields;
@@ -205,6 +206,7 @@ var App = {
 
   getRecord: function getRecord(record) {
     this.addRecord();
+    $("#put-record-info h3").text("Change record (" + record.id + ")");
     for(var key in record) {
       $("#put-record-form select[name='" + key + "']").val(record[key]);
       $("#put-record-form input[name='" + key + "']").val(record[key]);
